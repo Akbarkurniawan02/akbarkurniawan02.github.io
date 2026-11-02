@@ -140,6 +140,19 @@ def daily_stats():
     return True
 
 
+def indexnow():
+    """Tell Bing/Yandex (IndexNow) about new pages right away. Public API, no secret."""
+    try:
+        posts = json.load(open("posts.json", encoding="utf-8"))[:5]
+        urls = ["https://techrooz.github.io/"] + [f"https://techrooz.github.io/p/{p['slug']}.html" for p in posts]
+        body = json.dumps({"host": "techrooz.github.io", "key": "7c1e9f4a2b8d4e6f9a0b3c5d7e8f1a2b",
+                           "keyLocation": "https://techrooz.github.io/7c1e9f4a2b8d4e6f9a0b3c5d7e8f1a2b.txt", "urlList": urls}).encode()
+        urllib.request.urlopen(urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                               headers={"Content-Type": "application/json"}), timeout=20)
+    except Exception as e:
+        print("indexnow:", e)
+
+
 def daemon(hours):
     """Stay up for `hours`: pull new queue items, post each one exactly on time,
     save the queue and rebuild the website after every post."""
@@ -155,6 +168,7 @@ def daemon(hours):
             git("commit", "-qm", "Post TechRooz items and update site")
             for _ in range(3):
                 if git("push", "-q", "origin", "HEAD:main").returncode == 0:
+                    indexnow()
                     break
                 git("pull", "-q", "--rebase", "origin", "main")
         time.sleep(20)

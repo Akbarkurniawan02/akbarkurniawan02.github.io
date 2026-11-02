@@ -8,6 +8,7 @@ import html, json, os, re, sys
 from datetime import datetime, timedelta, timezone
 
 SITE_URL = "https://techrooz.github.io"
+INDEXNOW_KEY = "7c1e9f4a2b8d4e6f9a0b3c5d7e8f1a2b"  # public by design (IndexNow ownership file)
 CHANNEL = "https://t.me/techrooz_fa"
 ADMIN_TG = "mohammadsafari2222"
 EMAIL = "mohammadsfh11@gmail.com"
@@ -152,7 +153,7 @@ HEAD = """<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff">
 <title>{title}</title><meta name="description" content="{desc}">
 <meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">{og}
-<link rel="canonical" href="{url}"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="canonical" href="{url}"><link rel="alternate" type="application/rss+xml" title="تک‌روز" href="https://techrooz.github.io/feed.xml"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}style.css"></head><body>"""
 
@@ -235,6 +236,11 @@ def main(queue_path, site):
                 f'<button class="btn copylink">🔗 کپی لینک</button></div></article>{JOIN}'
                 f'<div class="sec"><h2>بیشتر از {n}</h2><a href="../c/{k}.html">همه ←</a></div><div class="grid">'
                 + "".join(card(q, "../") for q in rel) + "</div></main>")
+        ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": p["title"][:110],
+                         "datePublished": p["at"], "image": [p["photo"]] if p["photo"] else [],
+                         "inLanguage": "fa", "publisher": {"@type": "Organization", "name": "تک‌روز", "url": SITE_URL},
+                         "mainEntityOfPage": f"{SITE_URL}/p/{p['slug']}.html"}, ensure_ascii=False)
+        og += f'<meta property="og:type" content="article"><script type="application/ld+json">{ld}</script>'
         open(os.path.join(site, "p", p["slug"] + ".html"), "w", encoding="utf-8").write(
             page(p["title"] + " | تک‌روز", plain(body_of(p["caption"]))[:155], f"{SITE_URL}/p/{p['slug']}.html", "../", k, today, body, og))
 
@@ -278,6 +284,13 @@ q.oninput=show;show()});</script>''')
     open(os.path.join(site, "search.html"), "w", encoding="utf-8").write(
         page("جست‌وجو | تک‌روز", "جست‌وجو در مطالب تک‌روز", SITE_URL + "/search.html", "", "", today, search))
 
+    rss = "".join(f"<item><title>{E(p['title'])}</title><link>{SITE_URL}/p/{p['slug']}.html</link><guid>{SITE_URL}/p/{p['slug']}.html</guid>"
+                  f"<pubDate>{datetime.fromisoformat(p['at'].replace('Z', '+00:00')).strftime('%a, %d %b %Y %H:%M:%S +0000')}</pubDate>"
+                  f"<description>{E(plain(body_of(p['caption']))[:300])}</description></item>" for p in posts[:50])
+    open(os.path.join(site, "feed.xml"), "w", encoding="utf-8").write(
+        f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>تک‌روز</title><link>{SITE_URL}</link>'
+        f'<description>اخبار تکنولوژی، گیم و هوش مصنوعی به زبان ساده</description><language>fa</language>{rss}</channel></rss>')
+    open(os.path.join(site, INDEXNOW_KEY + ".txt"), "w").write(INDEXNOW_KEY)
     urls = [SITE_URL + "/", SITE_URL + "/search.html"] + [f"{SITE_URL}/c/{k}.html" for k, *_ in CATS] + [f"{SITE_URL}/p/{p['slug']}.html" for p in posts]
     open(os.path.join(site, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
                                                        + "".join(f"<url><loc>{u}</loc></url>" for u in urls) + "</urlset>")
