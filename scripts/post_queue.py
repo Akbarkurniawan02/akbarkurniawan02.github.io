@@ -122,8 +122,20 @@ def daily_stats():
     members = call("getChatMemberCount", {"chat_id": CHAT}).get("result")
     admins = [a["user"].get("username", a["user"].get("first_name")) for a in call("getChatAdministrators", {"chat_id": CHAT}).get("result", [])]
     chat = call("getChat", {"chat_id": CHAT}).get("result", {})
+    # average views of the last ~20 public posts (no token needed, public preview page)
+    views = []
+    try:
+        page = urllib.request.urlopen(urllib.request.Request("https://t.me/s/techrooz_fa", headers={"User-Agent": "Mozilla/5.0"}), timeout=20).read().decode()
+        import re
+        for v in re.findall(r'tgme_widget_message_views">([^<]+)', page)[-20:]:
+            v = v.strip()
+            views.append(int(float(v[:-1]) * 1000) if v.endswith("K") else int(float(v)))
+    except Exception as e:  # stats are best-effort
+        print("views fetch failed:", e)
+    avg = round(sum(views) / len(views)) if views else 0
     old.append({"date": today, "members": members, "admins": admins,
-                "admins_ok": sorted(admins) == sorted([OWNER, BOT]), "title": chat.get("title")})
+                "admins_ok": sorted(admins) == sorted([OWNER, BOT]), "title": chat.get("title"),
+                "avg_views": avg, "reach_pct": round(100 * avg / members, 1) if members else 0})
     json.dump(old[-120:], open("stats.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     return True
 
