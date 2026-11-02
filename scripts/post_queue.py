@@ -5,7 +5,7 @@ Each queue item: {"at": "2026-11-02T08:30:00Z", "photo": "<url or empty>", "capt
 Optional: "photos" (list of 2-10 image URLs = album), "poll" ({"question", "options"}), "silent" (no notification sound), "video" (direct mp4 URL, posted with sendVideo) and "link" (text post shows its preview, e.g. YouTube).
 """
 import json, os, subprocess, sys, time, urllib.parse, urllib.request, urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 QUEUE = "queue.json"
 CHAT = "@techrooz_fa"
@@ -105,13 +105,39 @@ def git(*args):
     return subprocess.run(["git", *args], capture_output=True, text=True)
 
 
+TEH = timezone(timedelta(hours=3, minutes=30))
+OWNER, BOT = "mohammadsafari2222", "TechRooz_fa_bot"
+
+
+def daily_stats():
+    """Once a day: member count + admin check, saved to stats.json (read by the daily Claude run,
+    so Claude never needs the bot token)."""
+    today = datetime.now(TEH).strftime("%Y-%m-%d")
+    try:
+        old = json.load(open("stats.json", encoding="utf-8"))
+    except (OSError, ValueError):
+        old = []
+    if old and old[-1].get("date") == today:
+        return False
+    members = call("getChatMemberCount", {"chat_id": CHAT}).get("result")
+    admins = [a["user"].get("username", a["user"].get("first_name")) for a in call("getChatAdministrators", {"chat_id": CHAT}).get("result", [])]
+    chat = call("getChat", {"chat_id": CHAT}).get("result", {})
+    old.append({"date": today, "members": members, "admins": admins,
+                "admins_ok": sorted(admins) == sorted([OWNER, BOT]), "title": chat.get("title")})
+    json.dump(old[-120:], open("stats.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    return True
+
+
 def daemon(hours):
     """Stay up for `hours`: pull new queue items, post each one exactly on time,
     save the queue and rebuild the website after every post."""
     end = time.time() + hours * 3600
     while time.time() < end:
         git("pull", "-q", "--rebase", "origin", "main")
-        if one_pass() == "changed":
+        changed = one_pass() == "changed"
+        if datetime.now(TEH).hour >= 6 and daily_stats():
+            changed = True
+        if changed:
             subprocess.run([sys.executable, "scripts/build_site.py", QUEUE, "."], check=False)
             git("add", "-A")
             git("commit", "-qm", "Post TechRooz items and update site")
